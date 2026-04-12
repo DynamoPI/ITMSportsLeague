@@ -7,6 +7,6 @@
         public string ContactEmail { get; set; } = string.Empty;
         public string? Phone { get; set; }
         public string? WebsiteUrl { get; set; }
-        public string CategoryName { get; set; } = string.Empty; 
+        public string CategoryName { get; set; } = string.Empty;    
     }
 }

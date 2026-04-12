@@ -15,7 +15,7 @@ public class LeagueDbContext : DbContext
     public DbSet<Referee> Referees => Set<Referee>();              
     public DbSet<Tournament> Tournaments => Set<Tournament>();    
     public DbSet<TournamentTeam> TournamentTeams => Set<TournamentTeam>();
-
+        
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -144,8 +144,43 @@ public class LeagueDbContext : DbContext
                   .IsUnique();
         });
 
+        // ── Sponsor Configuration ── //
+        modelBuilder.Entity<Sponsor>(entity =>
+        {
+            entity.HasKey(s => s.Id);
+            entity.Property(s => s.Name)
+                  .IsRequired()
+                  .HasMaxLength(150);
+            entity.HasIndex(s => s.Name)
+                  .IsUnique();
+            entity.Property(s => s.ContactEmail)
+                  .IsRequired()
+                  .HasMaxLength(150);
+            entity.Property(s => s.Phone)
+                  .HasMaxLength(20)
+                  .IsRequired(false);
+            entity.Property(s => s.WebsiteUrl)
+                  .HasMaxLength(150)
+                  .IsRequired(false);
+            entity.Property(s => s.Category)
+                  .IsRequired();
+            entity.Property(s => s.CreatedAt)
+                  .IsRequired();
+            entity.Property(s => s.UpdatedAt)
+                  .IsRequired(false);
+        });
 
-
+        // ── TournamentSponsor Configuration ── //
+        modelBuilder.Entity<TournamentSponsor>(entity =>
+        {
+            // La llave compuesta 
+            entity.HasKey(ts => new { ts.TournamentId, ts.SponsorId });
+            entity.Property(ts => ts.ContractAmount)
+                  .HasColumnType("decimal(18,2)")
+                  .IsRequired();
+            entity.Property(ts => ts.JoinedAt)
+                  .IsRequired();
+        });
 
     }
 }

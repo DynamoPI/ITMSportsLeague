@@ -1,33 +1,58 @@
-using AutoMapper;
+﻿using Microsoft.EntityFrameworkCore;
+using SportsLeague.DataAccess.Context;
+using SportsLeague.DataAccess.Repositories;
+using SportsLeague.Domain.Interfaces.Repositories;
+using SportsLeague.Domain.Interfaces.Services;
+using SportsLeague.Domain.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Add services to the container.
-builder.Services.AddControllers();
+// ── Entity Framework Core ──
+builder.Services.AddDbContext<LeagueDbContext>(options =>
+    options.UseSqlServer(
+        builder.Configuration.GetConnectionString("DefaultConnection")));
 
-// Register AutoMapper manually to avoid the vulnerable AutoMapper.Extensions package.
-var mappingConfig = new MapperConfiguration(mc =>
-{
-    // Register profiles here if any: mc.AddProfile<YourProfile>();
-});
-IMapper mapper = mappingConfig.CreateMapper();
-builder.Services.AddSingleton(mapper);
+// ── Repositories ──
+builder.Services.AddScoped(typeof(IGenericRepository<>), typeof(GenericRepository<>));
+builder.Services.AddScoped<ITeamRepository, TeamRepository>();
+builder.Services.AddScoped<IPlayerRepository, PlayerRepository>();
+builder.Services.AddScoped<IRefereeRepository, RefereeRepository>();           
+builder.Services.AddScoped<ITournamentRepository, TournamentRepository>();      
+builder.Services.AddScoped<ITournamentTeamRepository, TournamentTeamRepository>();
 
-// Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
-builder.Services.AddOpenApi();
+
+// ── Services ──
+builder.Services.AddScoped<ITeamService, TeamService>();
+builder.Services.AddScoped<IPlayerService, PlayerService>();
+builder.Services.AddScoped<IRefereeService, RefereeService>();           
+builder.Services.AddScoped<ITournamentService, TournamentService>();     
+
+// ── AutoMapper (configure a safe maximum depth to mitigate uncontrolled recursion DoS)
+builder.Services.AddAutoMapper(typeof(Program).Assembly);// ── Controllers ──
+builder.Services.AddControllers()
+    .AddJsonOptions(options =>
+    {
+        // Esto evita que el serializador de JSON también caiga en ciclos infinitos
+        options.JsonSerializerOptions.ReferenceHandler = System.Text.Json.Serialization.ReferenceHandler.IgnoreCycles;
+        options.JsonSerializerOptions.MaxDepth = 32; // Límite físico de anidación
+    });
+// ── Swagger ──
+builder.Services.AddEndpointsApiExplorer();
+builder.Services.AddSwaggerGen();
 
 var app = builder.Build();
 
-// Configure the HTTP request pipeline.
-if (app.Environment.IsDevelopment())
+// ── Middleware Pipeline ──
+if (app.Environment.IsDevelopment()) // Solo habilitamos Swagger en desarrollo para evitar exponer documentación sensible en producción
 {
-    app.MapOpenApi();
+    app.UseSwagger();
+    app.UseSwaggerUI();
 }
 
+app.MapGet("/", () => Results.Redirect("/swagger"));
+
 app.UseHttpsRedirection();
-
 app.UseAuthorization();
-
 app.MapControllers();
 
 app.Run();

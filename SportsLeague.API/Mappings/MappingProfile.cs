@@ -16,7 +16,7 @@ namespace SportsLeague.API.Mappings
             CreateMap<TeamRequestDTO, Team>()
                 .MaxDepth(5);
 
-            CreateMap<Team, TeamResponseDTO>() 
+            CreateMap<Team, TeamResponseDTO>()
                 .MaxDepth(5); // Esto asegura que al mapear un Team, no se caerá en ciclos infinitos al intentar mapear sus Players o Tournaments relacionados.
 
             // Player mappings
@@ -24,7 +24,7 @@ namespace SportsLeague.API.Mappings
             CreateMap<Player, PlayerResponseDTO>()
                 .ForMember(
                     dest => dest.TeamName,
-                    opt => opt.MapFrom(src => src.Team.Name));
+                    opt => opt.MapFrom(src => src.Team.Name));  
 
             // Referee mappings
             CreateMap<RefereeRequestDTO, Referee>();
@@ -37,6 +37,13 @@ namespace SportsLeague.API.Mappings
                     dest => dest.TeamsCount,
                     opt => opt.MapFrom(src =>
                         src.TournamentTeams != null ? src.TournamentTeams.Count : 0));
+
+            //  Sponsor mappings    
+            CreateMap<SponsorRequestDTO, Sponsor>();
+            CreateMap<Sponsor, SponsorResponseDTO>()
+                .ForMember(
+                    dest => dest.CategoryName,
+                    opt => opt.MapFrom(src => src.Category.ToString()));
 
         }
     }

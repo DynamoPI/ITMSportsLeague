@@ -78,5 +78,24 @@ namespace SportsLeague.API.Controllers
                 return NotFound();
             }
         }
-    }
-}
+        [HttpPost("{id}/tournaments")]
+        public async Task<IActionResult> AssignTournament(int id, [FromBody] AssignTournamentDTO request)
+        {
+            try
+            {
+
+                await _sponsorService.AssignToTournamentAsync(id, request.TournamentId, request.ContractAmount);
+                return Ok(new { message = "Patrocinador vinculado al torneo con éxito" });
+            }
+            catch (KeyNotFoundException ex)
+            {
+                return NotFound(new { message = ex.Message });
+            }
+            catch (Exception ex)
+            { 
+          
+                return BadRequest(new { message = "No se pudo realizar la vinculación: " + ex.Message });
+            }
+        }
+    } 
+} 

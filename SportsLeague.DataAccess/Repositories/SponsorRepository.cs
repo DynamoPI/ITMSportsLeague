@@ -17,5 +17,10 @@ namespace SportsLeague.DataAccess.Repositories
            
             return await base.CreateAsync(sponsor);
         }
+        public async Task AddTournamentRelationAsync(TournamentSponsor relation)
+        {
+            await _context.Set<TournamentSponsor>().AddAsync(relation);
+            await _context.SaveChangesAsync();
+        }
     }
 }

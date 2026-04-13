@@ -32,7 +32,6 @@ namespace SportsLeague.Domain.Services
 
         public async Task<Sponsor> CreateAsync(Sponsor sponsor)
         {
-            // Validamos duplicados por nombre antes de mandar a la DB
             var existing = await _sponsorRepository.GetAllAsync();
             if (existing.Any(s => s.Name.Trim().ToLower() == sponsor.Name.Trim().ToLower()))
             {
@@ -40,7 +39,6 @@ namespace SportsLeague.Domain.Services
             }
 
             _logger.LogInformation("Creando patrocinador: {Name}", sponsor.Name);
-            // Usamos CreateAsync que es el nombre en tu GenericRepository
             return await _sponsorRepository.CreateAsync(sponsor);
         }
 
@@ -69,6 +67,29 @@ namespace SportsLeague.Domain.Services
 
             _logger.LogInformation("Eliminando patrocinador con ID: {Id}", id);
             await _sponsorRepository.DeleteAsync(id);
+        }
+
+        public async Task AssignToTournamentAsync(int sponsorId, int tournamentId, decimal contractAmount)
+        {
+            // 1. Validamos que el sponsor exista
+            var sponsor = await _sponsorRepository.GetByIdAsync(sponsorId);
+            if (sponsor == null)
+                throw new KeyNotFoundException($"No se encontró el patrocinador con ID {sponsorId}");
+
+            // 2. Creamos la entidad intermedia
+            var relation = new TournamentSponsor
+            {
+                SponsorId = sponsorId,
+                TournamentId = tournamentId,
+                ContractAmount = contractAmount,
+                JoinedAt = DateTime.Now,
+                CreatedAt = DateTime.Now
+            };
+
+            _logger.LogInformation("Vinculando Sponsor {SponsorId} al Torneo {TournamentId}", sponsorId, tournamentId);
+
+            // 3. Llamamos al método que creamos en el SponsorRepository
+            await _sponsorRepository.AddTournamentRelationAsync(relation);
         }
     }
 }

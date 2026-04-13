@@ -35,6 +35,20 @@ namespace SportsLeague.API.Controllers
             return Ok(_mapper.Map<SponsorResponseDTO>(sponsor));
         }
 
+        [HttpGet("{id}/tournaments")]
+        public async Task<ActionResult<IEnumerable<Tournament>>> GetSponsorTournaments(int id)
+        {
+            var tournaments = await _sponsorService.GetTournamentsBySponsorAsync(id);
+            return Ok(tournaments); 
+        }
+
+        [HttpDelete("{id}/tournaments/{tid}")]
+        public async Task<IActionResult> UnlinkTournament(int id, int tid)
+        {
+            await _sponsorService.UnlinkTournamentAsync(id, tid);
+            return NoContent();
+        }
+
         [HttpPost]
         public async Task<ActionResult<SponsorResponseDTO>> Create(SponsorRequestDTO request)
         {

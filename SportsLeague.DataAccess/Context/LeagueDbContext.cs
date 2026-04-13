@@ -15,7 +15,8 @@ public class LeagueDbContext : DbContext
     public DbSet<Referee> Referees => Set<Referee>();              
     public DbSet<Tournament> Tournaments => Set<Tournament>();    
     public DbSet<TournamentTeam> TournamentTeams => Set<TournamentTeam>();
-        
+    public DbSet<Sponsor> Sponsors => Set<Sponsor>();
+    public DbSet<TournamentSponsor> TournamentSponsors => Set<TournamentSponsor>();
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -147,6 +148,7 @@ public class LeagueDbContext : DbContext
         // ── Sponsor Configuration ── //
         modelBuilder.Entity<Sponsor>(entity =>
         {
+            entity.ToTable("Sponsor");
             entity.HasKey(s => s.Id);
             entity.Property(s => s.Name)
                   .IsRequired()
@@ -168,12 +170,14 @@ public class LeagueDbContext : DbContext
                   .IsRequired();
             entity.Property(s => s.UpdatedAt)
                   .IsRequired(false);
+
         });
 
         // ── TournamentSponsor Configuration ── //
         modelBuilder.Entity<TournamentSponsor>(entity =>
         {
             // La llave compuesta 
+            entity.ToTable("TournamentSponsor");
             entity.HasKey(ts => new { ts.TournamentId, ts.SponsorId });
             entity.Property(ts => ts.ContractAmount)
                   .HasColumnType("decimal(18,2)")

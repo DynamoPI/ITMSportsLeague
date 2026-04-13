@@ -91,5 +91,18 @@ namespace SportsLeague.Domain.Services
             // 3. Llamamos al método que creamos en el SponsorRepository
             await _sponsorRepository.AddTournamentRelationAsync(relation);
         }
+        public async Task<IEnumerable<Tournament>> GetTournamentsBySponsorAsync(int sponsorId)
+        {
+            var sponsor = await _sponsorRepository.GetByIdWithTournamentsAsync(sponsorId);
+            if (sponsor == null) throw new KeyNotFoundException("Sponsor no encontrado");
+
+            // Extraemos solo los torneos de la tabla intermedia
+            return sponsor.TournamentSponsors.Select(ts => ts.Tournament);
+        }
+
+        public async Task UnlinkTournamentAsync(int sponsorId, int tournamentId)
+        {
+            await _sponsorRepository.RemoveTournamentRelationAsync(sponsorId, tournamentId);
+        }
     }
 }

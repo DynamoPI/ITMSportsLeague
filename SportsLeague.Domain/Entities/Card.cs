@@ -11,7 +11,7 @@ namespace SportsLeague.Domain.Entities
 
         // Navigation Properties
         public Match Match { get; set; } = null!; // Relación con el partido
-        public Player Player { get; set; } = null!; // Relación con el jugador
+        public Player Player { get; set; } = null!; // Relación con el jugador  
     }
 
 }

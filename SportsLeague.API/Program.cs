@@ -22,11 +22,13 @@ builder.Services.AddScoped<IPlayerRepository, PlayerRepository>();
 builder.Services.AddScoped<IRefereeRepository, RefereeRepository>();           
 builder.Services.AddScoped<ITournamentRepository, TournamentRepository>();
 builder.Services.AddScoped<ITournamentTeamRepository, TournamentTeamRepository>();
+builder.Services.AddScoped<IMatchLineupRepository, MatchLineupRepository>();
 builder.Services.AddScoped<ISponsorRepository, SponsorRepository>();
 builder.Services.AddScoped<IMatchRepository, MatchRepository>();
 builder.Services.AddScoped<IMatchResultRepository, MatchResultRepository>();
 builder.Services.AddScoped<IGoalRepository, GoalRepository>();
 builder.Services.AddScoped<ICardRepository, CardRepository>();
+builder.Services.AddScoped<IMatchLineupRepository, MatchLineupRepository>();
 
 // ── Services ──
 builder.Services.AddScoped<ITeamService, TeamService>();
@@ -38,6 +40,7 @@ builder.Services.AddScoped<IMatchService, MatchService>();
 builder.Services.AddScoped<IMatchEventService, MatchEventService>();
 builder.Services.AddScoped<MatchValidationHelper>();
 builder.Services.AddScoped<IStandingsService, StandingsService>();
+builder.Services.AddScoped<IMatchLineupService, MatchLineupService>();
 
 
 // ── AutoMapper (configure a safe maximum depth to mitigate uncontrolled recursion DoS)

@@ -291,6 +291,31 @@ public class LeagueDbContext : DbContext
                       .OnDelete(DeleteBehavior.Restrict);
             });
 
+            // ── MatchLineup Configuration ──
+            modelBuilder.Entity<MatchLineup>(entity =>
+            {
+                entity.HasKey(ml => ml.Id);
+                entity.Property(ml => ml.IsStarter).IsRequired();
+                entity.Property(ml => ml.Position).IsRequired().HasMaxLength(5);
+                entity.Property(ml => ml.CreatedAt).IsRequired();
+                entity.Property(ml => ml.UpdatedAt).IsRequired(false);
+
+                // Relación con Match (Cascade)
+                entity.HasOne(ml => ml.Match)
+                      .WithMany()
+                      .HasForeignKey(ml => ml.MatchId)
+                      .OnDelete(DeleteBehavior.Cascade);
+
+                // Relación con Player (Restrict)
+                entity.HasOne(ml => ml.Player)
+                      .WithMany()
+                      .HasForeignKey(ml => ml.PlayerId)
+                      .OnDelete(DeleteBehavior.Restrict);
+
+                // Índice único compuesto
+                entity.HasIndex(ml => new { ml.MatchId, ml.PlayerId }).IsUnique();
+            });
+
         });
 
 

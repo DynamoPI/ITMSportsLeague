@@ -24,7 +24,7 @@ namespace SportsLeague.API.Mappings
             CreateMap<Player, PlayerResponseDTO>()
                 .ForMember(
                     dest => dest.TeamName,
-                    opt => opt.MapFrom(src => src.Team.Name));  
+                    opt => opt.MapFrom(src => src.Team.Name));
 
             // Referee mappings
             CreateMap<RefereeRequestDTO, Referee>();
@@ -76,6 +76,13 @@ namespace SportsLeague.API.Mappings
                     opt => opt.MapFrom(src =>
                         src.Player.FirstName + " " + src.Player.LastName));
 
+            // ── MatchLineup Mappings ──
+            CreateMap<CreateMatchLineupDto, MatchLineup>(); // Mapeo de entrada 
+            CreateMap<MatchLineup, MatchLineupDto>() // Mapeo de salida 
+                .ForMember(dest => dest.PlayerName,
+                           opt => opt.MapFrom(src => src.Player.FirstName + " " + src.Player.LastName)) 
+                .ForMember(dest => dest.TeamName,
+                           opt => opt.MapFrom(src => src.Player.Team.Name)); 
 
 
         }

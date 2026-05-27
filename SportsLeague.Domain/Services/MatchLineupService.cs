@@ -35,7 +35,7 @@ public class MatchLineupService : IMatchLineupService
             throw new InvalidOperationException("Solo se pueden registrar alineaciones en partidos Scheduled"); 
 
         // V2 & V3: El jugador debe existir y pertenecer al HomeTeam o AwayTeam del partido
-        // Reutilizamos el helper inyectable de la Fase 5 tal como recomendó el profe
+        // Reutilizamos el helper inyectable de la Fase 5 
         var player = await _validationHelper.ValidatePlayerInMatchAsync(lineup.PlayerId, match); 
 
         // V4: El jugador no puede estar registrado dos veces en la misma alineación del mismo partido
